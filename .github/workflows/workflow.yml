@@ -15,20 +15,18 @@ jobs:
     steps:
     - name: Set matrix
       id: set-matrix
-      run: echo "::set-output name=matrix-output::one,two,three"
+      run: |
+        echo "matrix-output={\"contexts\": [\"vusal\",\"alakbarov\",\"eldar\"]}" >> $GITHUB_OUTPUT
 
   use-matrix:
     needs: define-matrix
     runs-on: ubuntu-latest
 
-    env:
-      MY_MATRIX: ${{ needs.define-matrix.outputs.matrix-output }}
-
     strategy:
       matrix:
-        mymatrix: [ '${MY_MATRIX}' ]
+        mymatrix: ${{ fromJSON(needs.define-matrix.outputs.matrix-output) }}
 
     steps:
-    - name: Use matrix
+    - name: Use matrix ${{ matrix.mymatrix }}
       run: |
         echo "Using matrix: ${{ matrix.mymatrix }}"
