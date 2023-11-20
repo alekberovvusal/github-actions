@@ -6,27 +6,17 @@ on:
       - main
 
 jobs:
-  define-matrix:
+  job1:
     runs-on: ubuntu-latest
-
     outputs:
-      matrix-output: ${{ steps.set-matrix.outputs.matrix-output }}
-
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
-    - name: Set matrix
-      id: set-matrix
-      run: |
-        echo "matrix-output={\"contexts\": [\"vusal\",\"alakbarov\",\"eldar\"]}" >> $GITHUB_OUTPUT
-
-  use-matrix:
-    needs: define-matrix
+      - id: set-matrix
+        run: echo "matrix={\"include\":[{\"project\":\"foo\",\"config\":\"Debug\"},{\"project\":\"bar\",\"config\":\"Release\"}]}" >> $GITHUB_OUTPUT
+  job2:
+    needs: job1
     runs-on: ubuntu-latest
-
     strategy:
-      matrix:
-        mymatrix: ${{ fromJSON(needs.define-matrix.outputs.matrix-output) }}
-
+      matrix: ${{ fromJSON(needs.job1.outputs.matrix) }}
     steps:
-    - name: Use matrix ${{ matrix.mymatrix }}
-      run: |
-        echo "Using matrix: ${{ matrix.mymatrix }}"
+      - run: build
