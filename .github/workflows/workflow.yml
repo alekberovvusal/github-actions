@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      steps-output: ${{ steps.set-matrix.outputs }}
+      steps-output: ${{ steps.set-matrix.outputs.steps-output }}
 
     steps:
     - name: Set matrix
