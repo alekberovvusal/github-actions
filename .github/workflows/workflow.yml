@@ -23,7 +23,7 @@ jobs:
 
     strategy:
       matrix:
-        mymatrix: ${{fromJson(needs.define-matrix.outputs.steps-output)}}
+        mymatrix: ${{fromJSON(needs.define-matrix.outputs.steps-output)}}
 
     steps:
     - name: Use matrix
