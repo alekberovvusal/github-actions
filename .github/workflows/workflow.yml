@@ -10,20 +10,23 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      steps-output: ${{ steps.set-matrix.outputs.steps-output }}
+      matrix-output: ${{ steps.set-matrix.outputs.matrix-output }}
 
     steps:
     - name: Set matrix
       id: set-matrix
-      run: echo "myarray=one,two,three" >> $GITHUB_ENV
+      run: echo "::set-output name=matrix-output::one,two,three"
 
   use-matrix:
     needs: define-matrix
     runs-on: ubuntu-latest
 
+    env:
+      MY_MATRIX: ${{ needs.define-matrix.outputs.matrix-output }}
+
     strategy:
       matrix:
-        mymatrix: ${{fromJSON(needs.define-matrix.outputs.steps-output)}}
+        mymatrix: [${{ env.MY_MATRIX }}]
 
     steps:
     - name: Use matrix
