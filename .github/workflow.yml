@@ -1,0 +1,31 @@
+name: CI/CD Workflow
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  define-matrix:
+    runs-on: ubuntu-latest
+
+    outputs:
+      steps-output: ${{ steps.set-matrix.outputs }}
+
+    steps:
+    - name: Set matrix
+      id: set-matrix
+      run: echo "myarray=one,two,three" >> $GITHUB_ENV
+
+  use-matrix:
+    needs: define-matrix
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        mymatrix: ${{fromJson(needs.define-matrix.outputs.steps-output)}}
+
+    steps:
+    - name: Use matrix
+      run: |
+        echo "Using matrix: ${{ matrix.mymatrix }}"
